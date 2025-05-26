@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        maven("https://mirrors.cloud.tencent.com/nexus/repository/maven") // 腾讯云镜像
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -8,6 +9,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven("https://mirrors.cloud.tencent.com/nexus/repository/maven") // 腾讯云镜像
         google()
         mavenCentral()
     }

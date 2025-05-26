@@ -49,7 +49,9 @@ import androidx.media3.common.util.RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.LoadControl
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerView
@@ -125,6 +127,13 @@ fun VideoPlayer(
     defaultFullScreeen: Boolean = false,
     enablePipWhenBackPressed: Boolean = false,
     handleAudioFocus: Boolean = true,
+    loadControl: LoadControl = DefaultLoadControl.Builder()
+        .setBufferDurationsMs(5000,// 最小缓冲时间（触发加载的阈值)
+            10_000, //最大缓冲时间（停止加载的阈值）
+            0, // 播放开始前预缓冲时间
+            1000) // 重新缓冲后预缓冲时间
+        .setPrioritizeTimeOverSizeThresholds(true) //优先满足时间阈值（适合直播或低延迟场景）
+        .build(),
     playerBuilder: ExoPlayer.Builder.() -> ExoPlayer.Builder = { this },
     playerInstance: ExoPlayer.() -> Unit = {},
 ) {
@@ -146,6 +155,7 @@ fun VideoPlayer(
                     .build(),
                 handleAudioFocus,
             )
+            .setLoadControl(loadControl)
             .apply {
                 val cache = VideoPlayerCacheManager.getCache()
                 if (cache != null) {
