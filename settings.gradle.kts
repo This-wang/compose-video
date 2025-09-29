@@ -11,6 +11,10 @@ dependencyResolutionManagement {
     repositories {
         maven {
             url = uri("https://maven.pkg.github.com/This-wang/compose-video")
+            credentials {
+                username = providers.gradleProperty("gpr.user").get()
+                password = providers.gradleProperty("gpr.key").get()
+            }
         }
         maven("https://mirrors.cloud.tencent.com/nexus/repository/maven") // 腾讯云镜像
         google()
