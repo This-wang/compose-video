@@ -6,7 +6,7 @@ plugins.withId("com.android.library") {
 
     // 读取 version.properties 文件的函数
     fun readVersionProperties(): Properties {
-        val versionPropsFile = rootProject.file("gradle/version.properties")
+        val versionPropsFile = rootProject.file("compose-video/version.properties")
         return Properties().apply {
             if (versionPropsFile.exists()) {
                 versionPropsFile.reader().use { load(it) }
