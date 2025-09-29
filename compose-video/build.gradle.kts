@@ -1,8 +1,4 @@
-import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
-
-apply(from = "${rootDir}/publish.gradle")
-apply(from = "${rootDir}/scripts/publish-root.gradle")
-apply(from = "${rootDir}/scripts/publish-module.gradle")
+apply(from = rootProject.file("gradle/publish.gradle.kts"))
 
 plugins {
     id("com.android.library")

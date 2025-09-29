@@ -67,8 +67,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":compose-video"))
-
+//    implementation(project(":compose-video"))
+    implementation("com.plugins.util:video-play:0.0.1")
     implementation(libs.bundles.androidx)
     implementation(libs.bundles.compose)
     implementation(libs.bundles.media3)

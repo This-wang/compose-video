@@ -65,9 +65,9 @@ import io.sanghun.compose.video.uri.toUri
 import io.sanghun.compose.video.util.findActivity
 import io.sanghun.compose.video.util.setFullScreen
 import kotlinx.coroutines.Dispatchers
-import java.util.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 /**
  * [VideoPlayer] is UI component that can play video in Jetpack Compose. It works based on ExoPlayer.
@@ -128,10 +128,12 @@ fun VideoPlayer(
     enablePipWhenBackPressed: Boolean = false,
     handleAudioFocus: Boolean = true,
     loadControl: LoadControl = DefaultLoadControl.Builder()
-        .setBufferDurationsMs(5000,// 最小缓冲时间（触发加载的阈值)
-            10_000, //最大缓冲时间（停止加载的阈值）
+        .setBufferDurationsMs(
+            5000,// 最小缓冲时间（触发加载的阈值)
+            50_000, //最大缓冲时间（停止加载的阈值）
             0, // 播放开始前预缓冲时间
-            1000) // 重新缓冲后预缓冲时间
+            1000
+        ) // 重新缓冲后预缓冲时间
         .setPrioritizeTimeOverSizeThresholds(true) //优先满足时间阈值（适合直播或低延迟场景）
         .build(),
     playerBuilder: ExoPlayer.Builder.() -> ExoPlayer.Builder = { this },
@@ -161,7 +163,12 @@ fun VideoPlayer(
                 if (cache != null) {
                     val cacheDataSourceFactory = CacheDataSource.Factory()
                         .setCache(cache)
-                        .setUpstreamDataSourceFactory(DefaultDataSource.Factory(context, httpDataSourceFactory))
+                        .setUpstreamDataSourceFactory(
+                            DefaultDataSource.Factory(
+                                context,
+                                httpDataSourceFactory
+                            )
+                        )
                     setMediaSourceFactory(DefaultMediaSourceFactory(cacheDataSourceFactory))
                 }
             }
