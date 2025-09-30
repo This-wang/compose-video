@@ -18,11 +18,15 @@ package io.sanghun.compose.video
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.Color
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.ImageButton
 import androidx.activity.compose.BackHandler
 import androidx.annotation.FloatRange
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.SecureFlagPolicy
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.AudioAttributes
@@ -67,6 +72,7 @@ import io.sanghun.compose.video.util.setFullScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.UUID
 
 /**
@@ -209,7 +215,11 @@ fun VideoPlayer(
     LaunchedEffect(mediaItems, player) {
         mediaSession?.release()
         mediaSession = MediaSession.Builder(context, ForwardingPlayer(player))
-            .setId("VideoPlayerMediaSession_${UUID.randomUUID().toString().lowercase().split("-").first()}")
+            .setId(
+                "VideoPlayerMediaSession_${
+                    UUID.randomUUID().toString().lowercase().split("-").first()
+                }"
+            )
             .build()
         val exoPlayerMediaItems = withContext(Dispatchers.IO) {
             mediaItems.map {
@@ -388,4 +398,40 @@ internal fun VideoPlayerSurface(
             }
         }
     }
+}
+
+/**
+ * @param model url/uri/file, local/network
+ */
+@Composable
+fun NfVideoPlayer(
+    modifier: Modifier = Modifier,
+    model: Any?
+) {
+    if (model == null || (model is String && model.isBlank())) return
+    val item = if (model is String && model.startsWith("http", ignoreCase = true))
+        VideoPlayerMediaItem.NetworkMediaItem(url = model)
+    else when (model) {
+        is Uri -> model
+        is File -> model.toUri()
+        is String -> model.toUri()
+        else -> null
+    }?.let {
+        Log.d("NfVideoPlayer", "model=$it")
+        VideoPlayerMediaItem.StorageMediaItem(storageUri = it)
+    } ?: return
+
+    VideoPlayer(
+        controllerConfig = VideoPlayerControllerConfig.Default.copy(
+            showNextTrackButton = false,
+            showBackTrackButton = false,
+            controllerShowTimeMilliSeconds = 2000
+        ),
+        mediaItems = listOf(item),
+        handleLifecycle = false,
+        autoPlay = false,
+        modifier = modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+    )
 }
