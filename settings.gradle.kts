@@ -10,7 +10,7 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         maven {
-            url = uri("https://maven.pkg.github.com/This-wang/compose-video")
+            url = uri("https://maven.pkg.github.com/LojaHuang/nf-chat-core")
             credentials {
                 username = System.getenv("GITHUB_PACKAGE_USER")
                 password = System.getenv("GITHUB_PACKAGE_TOKEN")
